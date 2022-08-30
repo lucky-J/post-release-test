@@ -4,10 +4,8 @@ on:
   release:
     types: [published]
 
-  name: Post release docker actions
-
 jobs:
-  build:
+  docker:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
