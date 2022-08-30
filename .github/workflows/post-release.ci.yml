@@ -8,9 +8,6 @@ jobs:
   docker:
     name: docker build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-
     steps:
       # https://github.com/actions/checkout
       - name: Checkout codebase
@@ -34,8 +31,7 @@ jobs:
           tags: luckyj/github-post-release:${{ github.event.release.tag_name }}
           labels: Release ${{ github.event.release.tag_name }}
 
-
-    installer:
+  installer:
       name: Create and publish installer
       runs-on: ubuntu-22.04
       steps:
