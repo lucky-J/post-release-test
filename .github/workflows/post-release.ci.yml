@@ -23,19 +23,10 @@ jobs:
       # https://github.com/docker/login-action
       - name: Login to DockerHub
         # Only login if not a PR, as PRs only trigger a Docker build and not a push
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-
-      # Fetch release data of the current repository from where the workflow is used.
-      - name: Get Release data
-        id: release_data
-        uses: KevinRohn/github-full-release-data@v2
-
-      - name: Show tag name with echo
-        run: echo ${{ steps.release_data.outputs.tag_name }}
 
       - name: Docker build and push
         id: docker_build
