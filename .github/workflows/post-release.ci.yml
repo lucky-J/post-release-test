@@ -50,7 +50,7 @@ jobs:
         # Build `installer.sh` script. The result script will be placed into `./build` directory.
         - name: Run installer creation
           shell: bash
-          run: pwd && ./infrustructure/installer_builder.sh ${{ github.event.release.tag_name }}
+          run: ./infrastructure/installer_builder.sh ${{ github.event.release.tag_name }}
 
         # Uploads `installer.sh` script. Requires `upload_url` from the `latest_release` step.
         - name: Upload installer.sh
