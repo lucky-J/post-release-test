@@ -7,17 +7,6 @@ on:
   name: Post release docker actions
 
 jobs:
-  debug:
-    name: Debug
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dump env
-        run: env | sort
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
   build:
     runs-on: ubuntu-latest
     strategy:
