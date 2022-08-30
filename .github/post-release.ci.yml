@@ -1,0 +1,61 @@
+name: Docker image build CI - build docker image.
+
+on:
+  release:
+    types: [published]
+
+  name: Post release docker actions
+
+jobs:
+  debug:
+    name: Debug
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump env
+        run: env | sort
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout codebase
+        uses: actions/checkout@v2
+
+      # https://github.com/docker/setup-buildx-action
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # https://github.com/docker/login-action
+      - name: Login to DockerHub
+        # Only login if not a PR, as PRs only trigger a Docker build and not a push
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+    # Fetch release data of the current repository from where the workflow is used.
+    - name: Get Release data
+      id: release_data
+      uses: KevinRohn/github-full-release-data@v2
+
+    - name: Show tag name with echo
+      run: echo ${{ steps.release_data.outputs.tag_name }}
+
+    - name: Docker build and push
+      id: docker_build
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        file: ./Dockerfile
+        platforms: linux/amd64
+        # Use tags / labels provided by 'docker/metadata-action' above
+        tags: ${{ github.event.release.tag_name }}
+        labels: Release ${{ github.event.release.tag_name }}
